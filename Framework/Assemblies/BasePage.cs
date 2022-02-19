@@ -27,18 +27,13 @@ namespace Framework.Assemblies
 
         public IWebElement GetElement(By locator, TimeSpan timeToWait)
         {
-            IWebElement elem = null;
-            if(WaitHelper.IsElementPresent(Driver,locator, timeToWait) == true)
-            {
-                elem = Driver.FindElement(locator);
-            }
-
-            return elem;
+            return WaitHelper.WaitForElementPresent(Driver, locator, timeToWait);
         }
 
         public IReadOnlyCollection<IWebElement>GetElements(By locator, TimeSpan timeToWait)
         {
-            return WaitHelper.WaitForElementsPresent(Driver, locator, timeToWait);            
+            return WaitHelper.WaitForElementsPresent(Driver, locator, timeToWait);
+            
         }
 
         public string GetTitle()

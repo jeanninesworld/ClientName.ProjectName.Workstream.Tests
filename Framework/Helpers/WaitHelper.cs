@@ -15,6 +15,26 @@ namespace Framework.Helpers
     {
         private static WebDriverWait _wait;
 
+        public static IWebElement WaitForElementPresent(IWebDriver driver, By locator, TimeSpan timeout)
+        {
+            IWebElement element = null;
+            try
+            {
+                _wait = new WebDriverWait(driver, timeout);
+                _wait.PollingInterval = TimeSpan.FromMilliseconds(500);
+                _wait.IgnoreExceptionTypes(typeof(StaleElementReferenceException));
+
+                _wait.Until(drv => drv.FindElements(locator).Any());
+                element = driver.FindElement(locator);
+                
+            }
+            catch (WebDriverTimeoutException ex)
+            {
+                throw new Exception(String.Format("Unable to find elements using locator (0) withing the duration {1}", locator.ToString(), timeout.ToString()));
+            }
+            return element;
+        }
+
         public static ReadOnlyCollection<IWebElement> WaitForElementsPresent(IWebDriver driver, By locator, TimeSpan timeout)
         {
             ReadOnlyCollection<IWebElement> elements = null;
@@ -36,25 +56,49 @@ namespace Framework.Helpers
             return elements;
         }
 
-        public static Boolean WaitForElementPresent(IWebDriver driver, By locator, TimeSpan timeToWait)
+        public static ReadOnlyCollection<IWebElement> WaitForElementsVisible(IWebDriver driver, By locator, TimeSpan timeout)
         {
-            Boolean isPresent = true;
-
+            ReadOnlyCollection<IWebElement> elements = null;
             try
             {
-                _wait = new WebDriverWait(driver, timeToWait);
-                _wait.PollingInterval = TimeSpan.FromMilliseconds(5000);
+                _wait = new WebDriverWait(driver, timeout);
+                _wait.PollingInterval = TimeSpan.FromMilliseconds(500);
                 _wait.IgnoreExceptionTypes(typeof(StaleElementReferenceException));
 
-                isPresent = _wait.Until(drv => drv.FindElements(locator).Any());
-
+                if (IsElementVisible(driver, locator, timeout) == true)
+                {
+                    elements = driver.FindElements(locator);
+                }
             }
             catch (WebDriverTimeoutException ex)
             {
-                return true;
+                throw new Exception(String.Format("Unable to find elements using locator (0) withing the duration {1}", locator.ToString(), timeout.ToString()));
             }
-            return isPresent;
+            return elements;
         }
+
+        public static IWebElement WaitForElementVisible(IWebDriver driver, By locator, TimeSpan timeout)
+        {
+            IWebElement element = null;
+            try
+            {
+                _wait = new WebDriverWait(driver, timeout);
+                _wait.PollingInterval = TimeSpan.FromMilliseconds(500);
+                _wait.IgnoreExceptionTypes(typeof(StaleElementReferenceException));
+
+                if (IsElementVisible(driver, locator, timeout) == true)
+                {
+                    element = driver.FindElement(locator);
+                }
+            }
+            catch (WebDriverTimeoutException ex)
+            {
+                throw new Exception(String.Format("Unable to find element using locator (0) withing the duration {1}", locator.ToString(), timeout.ToString()));
+            }
+            return element;
+        }
+
+
 
 
         //create a method to determine if element is present
