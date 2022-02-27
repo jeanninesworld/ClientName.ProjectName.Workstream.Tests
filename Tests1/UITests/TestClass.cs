@@ -42,13 +42,13 @@ namespace Test.UITests
             PageContext.GoogleHome.SearchText(searchtext).GetResults().Should().HaveCountGreaterThan(1);
         }
 
-        /*[Test]
+        [Test]
         public void ChromeBrowser_MultipleSearch2_Successfull()
         {
             string dataInput = NPOIHelper.ReadExcel(@"C:\Users\Jeannine.Kwasnik\source\repos\Lecture10\ClientName.ProjectName.Workstream.Tests\Tests1\TestData\SearchData.xlsx", 1, 0);
 
             //perform our search
             PageContext.GoogleHome.SearchText(dataInput).GetResults().Should().HaveCountGreaterThan(1);
-        } */
+        } 
     }
 }
