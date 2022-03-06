@@ -45,18 +45,31 @@ namespace Framework.Helpers
         public static string ReadExcel(string filePath, int rowCell, int columnCell)
         {
             string content = null;
-            List<string> rowList = new List<string>();
-            ISheet sheet;
-            using (var stream = new FileStream(filePath, FileMode.Open))
+            try
             {
-                stream.Position = 0;
-                XSSFWorkbook xssfWorkbook = new XSSFWorkbook(stream);
-                sheet = xssfWorkbook.GetSheetAt(0);
-                IRow headerRow = sheet.GetRow(0);
-                int cellCount = headerRow.LastCellNum;
-                IRow row = sheet.GetRow(rowCell);
-                content = row.GetCell(columnCell).ToString();
+                List<string> rowList = new List<string>();
+                ISheet sheet;
+                using (var stream = new FileStream(filePath, FileMode.Open))
+                {
+                    stream.Position = 0;
+                    XSSFWorkbook xssfWorkbook = new XSSFWorkbook(stream);
+                    sheet = xssfWorkbook.GetSheetAt(0);
+                    IRow headerRow = sheet.GetRow(0);
+                    int cellCount = headerRow.LastCellNum;
+                    IRow row = sheet.GetRow(rowCell);
+                    content = row.GetCell(columnCell).ToString();
+                }
             }
+            catch(FileNotFoundException ex)
+            {
+                throw new Exception(String.Format("Unable to find File {0}.Stack Trace: \r\n {1}", ex.FileName, ex.StackTrace));
+            }
+
+            finally
+            {
+                
+            }
+            
             return content;
 
         }
