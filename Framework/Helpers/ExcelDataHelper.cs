@@ -1,4 +1,6 @@
-﻿using OfficeOpenXml;
+﻿using Amazon.Runtime.Internal;
+using Framework.CustomExceptions;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,37 +13,48 @@ namespace Framework.Helpers
     {
         public static IEnumerable<object> ReadExcel(string filePath, string sheet)
         {
-            //Use this line to set the license so you don't get a license exception when debugging
+
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            using(ExcelPackage package = new ExcelPackage (new FileInfo(filePath)))
+            using (ExcelPackage package = new ExcelPackage (new FileInfo(filePath)))
+        {
+            ExcelWorksheet worksheet = package.Workbook.Worksheets[sheet];
+            //get the first worksheet in workbook
+
+            int rowCount = worksheet.Dimension.End.Row;
+            int colCount = worksheet.Dimension.End.Column;
+            for(int row = 2; row <=rowCount; row++)
             {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets[sheet];
-                //get the first worksheet in workbook
-
-                int rowCount = worksheet.Dimension.End.Row;
-                int colCount = worksheet.Dimension.End.Column;
-                for(int row = 2; row <=rowCount; row++)
+                for(int col = 1; col <= colCount; col++)
                 {
-                    for(int col = 1; col <= colCount; col++)
+                    yield return new object[]
                     {
-                        yield return new object[]
-                        {
-                            worksheet.Cells[row,col].Value?.ToString().Trim()
-                        };
-                    }
+                        worksheet.Cells[row,col].Value?.ToString().Trim()
+                    };
                 }
-
             }
+
+        }
         }
         public static string ReadExcel(string filePath, string sheet, int row, int column)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            using (ExcelPackage package = new ExcelPackage(new FileInfo(filePath)))
+            string contents = null;
+
+            try
             {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets[sheet];
-                //get the first worksheet in workbook
-                return worksheet.Cells[row, column].Value?.ToString().Trim();
+                using (ExcelPackage package = new ExcelPackage(new FileInfo(filePath)))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[sheet];
+                    //get the first worksheet in workbook
+                    contents = worksheet.Cells[row, column].Value?.ToString().Trim();
+                }
             }
+            catch (Exception ex)
+            {
+                throw new ExceptionHandler("Unable to create Excel Package to read excel file due to invalid file:", filePath, new FileNotFoundException(),ex.InnerException);
+            }
+            
+            return contents;
         }
     }
 }
