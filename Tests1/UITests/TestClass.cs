@@ -43,6 +43,16 @@ namespace Test.UITests
         }
 
         [Test]
+
+        public void ChromeBrowser_SingleSearch_Successfull()
+        {
+            string searchContent = ExcelDataHelper.ReadExcel(@"C:\Users\Jeannine.Kwasnik\source\repos\Lecture10\ClientName.ProjectName.Workstream.Tests\Tests1\TestData\SearchData1.xlsx", "Sheet1", 2, 1);
+            //perform our search
+            PageContext.GoogleHome.SearchText(searchContent).GetResults().Should().HaveCountGreaterThan(1);
+        }
+
+
+        [Test]
         public void ChromeBrowser_MultipleSearch2_Successfull()
         {
             string dataInput = NPOIHelper.ReadExcel(@"C:\Users\Jeannine.Kwasnik\source\repos\Lecture10\ClientName.ProjectName.Workstream.Tests\Tests1\TestData\SearchData.xlsx", 1, 0);

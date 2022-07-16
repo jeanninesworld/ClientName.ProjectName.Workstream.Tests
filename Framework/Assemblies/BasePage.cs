@@ -27,12 +27,44 @@ namespace Framework.Assemblies
 
         public IWebElement GetElement(By locator, TimeSpan timeToWait)
         {
-            return WaitHelper.WaitForElementPresent(Driver, locator, timeToWait);
+            IWebElement elem = null;
+            try
+            {
+                elem = WaitHelper.WaitForElementPresent(Driver, locator, timeToWait);
+            }
+            catch(StaleElementReferenceException ex)
+            {
+                elem = WaitHelper.WaitForElementPresent(Driver, locator, timeToWait);
+            }
+            return elem;
+        }
+
+        public IWebElement GetClickableElement(By locator, TimeSpan timeToWait)
+        {
+            IWebElement elem = null;
+            try
+            {
+                elem = WaitHelper.WaitForElementVisible(Driver, locator, timeToWait);
+            }
+            catch(StaleElementReferenceException ex)
+            {
+                elem = WaitHelper.WaitForElementVisible(Driver, locator, timeToWait);
+            }
+            return elem;
         }
 
         public IReadOnlyCollection<IWebElement>GetElements(By locator, TimeSpan timeToWait)
         {
-            return WaitHelper.WaitForElementsPresent(Driver, locator, timeToWait);
+            IReadOnlyCollection<IWebElement> elems = null;
+            try
+            {
+                elems = WaitHelper.WaitForElementsPresent(Driver, locator, timeToWait);
+            }
+            catch (StaleElementReferenceException ex)
+            {
+                elems = WaitHelper.WaitForElementsPresent(Driver, locator, timeToWait);
+            }
+            return elems;  
             
         }
 

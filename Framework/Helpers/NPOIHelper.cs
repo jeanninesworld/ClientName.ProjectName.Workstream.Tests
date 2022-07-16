@@ -65,9 +65,11 @@ namespace Framework.Helpers
                 throw new Exception(String.Format("Unable to find File {0}.Stack Trace: \r\n {1}", ex.FileName, ex.StackTrace));
             }
 
-            finally
+            catch(Exception ex)
             {
-                
+                throw new Exception(String.Format("Problem occurred in setting property of package. " +
+                    "Check properties to use file stream \r\n Current Exception occurred {0}. \r\n " +
+                    "Stack Trace: \r\n {1}", ex.GetType().Name, ex.StackTrace));
             }
             
             return content;
